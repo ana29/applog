@@ -78,13 +78,13 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
-#production:
-#  <<: *default
-#  database: appLog_production
-#  username: AnaGodoy
-#  password: <%= ENV['APPLOG_DATABASE_PASSWORD'] %>
 production:
   <<: *default
-  database: d4v0anm6dqrt3e
-  username: uuwtzvkrxwksqv
-  password: f012716550377c02b35c49c7411b996e5fe34640391ab4c1df41c6fec8250adc
+  database: appLog_production
+  username: appLog
+  password: <%= ENV['APPLOG_DATABASE_PASSWORD'] %>
+#production:
+  #<<: *default
+#  database: d4v0anm6dqrt3e
+#  username: uuwtzvkrxwksqv
+#  password: f012716550377c02b35c49c7411b996e5fe34640391ab4c1df41c6fec8250adc
