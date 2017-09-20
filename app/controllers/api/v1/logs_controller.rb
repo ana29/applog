@@ -25,55 +25,69 @@ module Api
 
             end
 
+            def destroy
+                  log = Log.find(params[:id])
+                  log.destroy
+                  render json: {status: 'SUCCESS', message:'Deleted log', data:log},status: :ok
+                end
+
             def showByContexto
                 log = Log.where(contexto: params[:contexto])
                 render json: {status: 'SUCCESS', message:'Loaded log', data:log},status: :ok
-
-
             end
 
-            def mediaMensagem
-                logs = Log.where(contexto: params[:contexto]).order('hora DESC')
+            def averageMessagesPerHour
+                logs = Log.where(contexto: params[:contexto]).order('hora ASC')
+                total_messages = logs.size
+                averageMsg = total_messages
 
-                menorHora = logs.select(:hora)[0]['hora'].to_formatted_s(:time)
-                maiorHora = logs.select(:hora)[-1]['hora'].to_formatted_s(:time)
-                quantHoras = (maiorHora[0..2].to_i - menorHora[0..2].to_i).abs
-                quantMsg = logs.size
-                if quantHoras>0
-                    mediaMsg = (quantMsg.to_f/quantHoras.to_f)
-                else
-                    mediaMsg = quantMsg
+                if total_messages>1
+                    lower_hour = logs.select(:hora)[0]['hora'].to_formatted_s(:time)
+                    greater_hour = logs.select(:hora)[-1]['hora'].to_formatted_s(:time)
+                    total_amount_hours = (greater_hour[0..2].to_i - lower_hour[0..2].to_i).abs
+
+                    if total_amount_hours>0
+                        averageMsg = total_messages.to_f / total_amount_hours.to_f
+                    end
                 end
 
-
-                render json: {status: 'SUCCESS', message:'Loaded log', data:mediaMsg},status: :ok
+                render json: {status: 'SUCCESS', message:'Loaded data', data:averageMsg},status: :ok
             end
 
-            def maiorNumMensagens
-                msgs = map_log.max
-                render json: {status: 'SUCCESS', message:'Loaded logs', data:msgs},status: :ok
-
-            end
-
-            def menorNumMensagens
-                msgs = map_log.min
-                render json: {status: 'SUCCESS', message:'Loaded logs', data:msgs},status: :ok
+            def maxNumMessages
+                max_Num_Messages = map_num_msg_by_contexto.values.max
+                render json: {status: 'SUCCESS', message:'Loaded data', data:max_Num_Messages},status: :ok
 
             end
 
+            def minNumMessages
+                min_Num_Messages = map_num_msg_by_contexto.values.min
+                render json: {status: 'SUCCESS', message:'Loaded data', data:min_Num_Messages},status: :ok
+
+            end
+
+            def amountMessagePerContext
+                amountMessagePerContext = map_num_msg_by_contexto
+                render json: {status: 'SUCCESS', message:'Loaded data', data:amountMessagePerContext},status: :ok
+            end
 
             private
             def log_params
                 params.permit(:dia, :hora, :contexto, :tipo, :mensagem)
             end
 
-            def map_log
+            def map_num_msg_by_contexto
                 logs = Log.order('contexto');
-                msgs = Hash.new()
+                map = Hash.new()
                 logs.each do |log|
-                    msgs[log['contexto']] = log['hora']
+                    if map.has_key?(log['contexto'])
+                        map[log['contexto']] +=1
+                    else
+                        map[log['contexto']] = 1
+                    end
+
                 end
-                return msgs
+                return map
             end
 
         end
