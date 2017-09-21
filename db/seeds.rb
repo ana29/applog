@@ -19,8 +19,21 @@ Log.create([
         contexto:'certo',
         tipo:2,
         mensagem: 'tudo certo'
+    },
+    {
+        dia: '02/05/2000',
+        hora: '23:00',
+        contexto:'ok',
+        tipo:3,
+        mensagem: 'tudo ok'
+    },
+    {
+        dia: '12/12/1800',
+        hora: '04:00',
+        contexto:'velho',
+        tipo:3,
+        mensagem: 'tudo velho'
     }
-
 
 
     ])

@@ -7,6 +7,9 @@ Rails.application.routes.draw do
             get 'maxNumMessages/' => 'logs#maxNumMessages'
             get 'minNumMessages/' => 'logs#minNumMessages'
             get 'amountMessagePerContext/' => 'logs#amountMessagePerContext'
+            get 'oldestLog/' => 'logs#oldestLog'
+            get 'latestLog/' => 'logs#latestLog'
+
 
         end
     end

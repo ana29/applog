@@ -48,9 +48,9 @@ module Api
 
                     if total_amount_hours>0
                         averageMsg = total_messages.to_f / total_amount_hours.to_f
+
                     end
                 end
-
                 render json: {status: 'SUCCESS', message:'Loaded data', data:averageMsg},status: :ok
             end
 
@@ -69,6 +69,19 @@ module Api
             def amountMessagePerContext
                 amountMessagePerContext = map_num_msg_by_contexto
                 render json: {status: 'SUCCESS', message:'Loaded data', data:amountMessagePerContext},status: :ok
+            end
+
+            def oldestLog
+                logs = Log.order('dia ASC')
+                oldestLog = logs[0]
+                render json: {status: 'SUCCESS', message:'Loaded data', data:oldestLog},status: :ok
+            end
+
+            def latestLog
+                logs = Log.order('dia DESC')
+                latestLog = logs[0]
+                render json: {status: 'SUCCESS', message:'Loaded data', data:latestLog},status: :ok
+
             end
 
             private
