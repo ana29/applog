@@ -29,52 +29,72 @@ module Api
                   log = Log.find(params[:id])
                   log.destroy
                   render json: {status: 'SUCCESS', message:'Deleted log', data:log},status: :ok
+            end
+
+            def update
+                log = Log.find(params[:id])
+                if log.update_attributes(log_params)
+                  render json: {status: 'SUCCESS', message:'Updated log', data:log},status: :ok
+                else
+                  render json: {status: 'ERROR', message:'Log not updated', data:log.errors},status: :unprocessable_entity
                 end
+            end
 
             def showByContexto
                 log = Log.where(contexto: params[:contexto])
                 render json: {status: 'SUCCESS', message:'Loaded log', data:log},status: :ok
+
             end
 
             def averageMessagesPerHour
                 logs = Log.where(contexto: params[:contexto]).order('hora ASC')
                 total_messages = logs.size
                 averageMsg = total_messages
+                total_amount_hours= amountHour
 
-                if total_messages>1
-                    lower_hour = logs.select(:hora)[0]['hora'].to_formatted_s(:time)
-                    greater_hour = logs.select(:hora)[-1]['hora'].to_formatted_s(:time)
-                    total_amount_hours = (greater_hour[0..2].to_i - lower_hour[0..2].to_i).abs
-
-                    if total_amount_hours>0
+                if total_amount_hours >0
                         averageMsg = total_messages.to_f / total_amount_hours.to_f
-
-                    end
                 end
+
                 render json: {status: 'SUCCESS', message:'Loaded data', data:averageMsg},status: :ok
+
+            end
+
+            def maxNumMessagesPerHour
+                max_num_messages = map_num_msg_by_contexto.values.max/amountHour.to_f
+                render json: {status: 'SUCCESS', message:'Loaded data', data:max_num_messages},status: :ok
+
+            end
+
+            def minNumMessagesPerHour
+                min_num_messages = map_num_msg_by_contexto.values.min/amountHour.to_f
+                render json: {status: 'SUCCESS', message:'Loaded data', data:min_num_messages},status: :ok
+
             end
 
             def maxNumMessages
-                max_Num_Messages = map_num_msg_by_contexto.values.max
-                render json: {status: 'SUCCESS', message:'Loaded data', data:max_Num_Messages},status: :ok
+                max_num_messages = map_num_msg_by_contexto.values.max
+                render json: {status: 'SUCCESS', message:'Loaded data', data:max_num_messages},status: :ok
 
             end
 
             def minNumMessages
-                min_Num_Messages = map_num_msg_by_contexto.values.min
-                render json: {status: 'SUCCESS', message:'Loaded data', data:min_Num_Messages},status: :ok
+                min_num_messages = map_num_msg_by_contexto.values.min
+                render json: {status: 'SUCCESS', message:'Loaded data', data:min_num_messages},status: :ok
 
             end
 
             def amountMessagePerContext
                 amountMessagePerContext = map_num_msg_by_contexto
                 render json: {status: 'SUCCESS', message:'Loaded data', data:amountMessagePerContext},status: :ok
+
             end
 
             def oldestLog
                 logs = Log.order('dia ASC')
                 oldestLog = logs[0]
                 render json: {status: 'SUCCESS', message:'Loaded data', data:oldestLog},status: :ok
+
             end
 
             def latestLog
@@ -87,6 +107,7 @@ module Api
             private
             def log_params
                 params.permit(:dia, :hora, :contexto, :tipo, :mensagem)
+
             end
 
             def map_num_msg_by_contexto
@@ -101,6 +122,23 @@ module Api
 
                 end
                 return map
+            end
+
+            def amountHour
+                logs = Log.order('hora ASC')
+                total_amount_hours = 0
+
+                if logs.size ==1
+                    total_amount_hours = 1
+
+                elsif logs.size >2
+                    lower_hour = logs.select(:hora)[0]['hora'].to_formatted_s(:time)
+                    greater_hour = logs.select(:hora)[-1]['hora'].to_formatted_s(:time)
+                    total_amount_hours = (greater_hour[0..2].to_i - lower_hour[0..2].to_i).abs
+                end
+
+                return total_amount_hours
+
             end
 
         end

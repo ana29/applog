@@ -10,6 +10,8 @@ Rails.application.routes.draw do
             get 'oldestLog/' => 'logs#oldestLog'
             get 'latestLog/' => 'logs#latestLog'
 
+            get 'maxNumMessagesPerHour/' => 'logs#maxNumMessagesPerHour'
+            get 'minNumMessagesPerHour/' => 'logs#minNumMessagesPerHour'
 
         end
     end
