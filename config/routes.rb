@@ -9,9 +9,7 @@ Rails.application.routes.draw do
             get 'amountMessagePerContext/' => 'logs#amountMessagePerContext'
             get 'oldestLog/' => 'logs#oldestLog'
             get 'latestLog/' => 'logs#latestLog'
-
-            get 'maxNumMessagesPerHour/' => 'logs#maxNumMessagesPerHour'
-            get 'minNumMessagesPerHour/' => 'logs#minNumMessagesPerHour'
+            get 'metrics/' => 'logs#metrics'
 
         end
     end

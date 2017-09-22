@@ -45,32 +45,34 @@ module Api
                 render json: {status: 'SUCCESS', message:'Loaded log', data:log},status: :ok
 
             end
+            def metrics
+                map = map_num_msg_by_contexto
+                total_amount_hours = amountHour
+
+                if total_amount_hours >0
+                        average_msg = map.values.sum/total_amount_hours.to_f
+                        max_num_messages = map.values.max/total_amount_hours.to_f
+                        min_num_messages = map.values.min/total_amount_hours.to_f
+                end
+                metrics = "Average messages per hour = #{average_msg}, Highest number of messages per hour = #{max_num_messages}, Lowest number of messages per hour= #{min_num_messages}" 
+
+                render json: {status: 'SUCCESS', message:'Loaded data', data:metrics},status: :ok
+            end
 
             def averageMessagesPerHour
                 logs = Log.where(contexto: params[:contexto]).order('hora ASC')
                 total_messages = logs.size
-                averageMsg = total_messages
+                average_msg = total_messages
                 total_amount_hours= amountHour
 
                 if total_amount_hours >0
-                        averageMsg = total_messages.to_f / total_amount_hours.to_f
+                        average_msg = total_messages.to_f / total_amount_hours.to_f
                 end
 
-                render json: {status: 'SUCCESS', message:'Loaded data', data:averageMsg},status: :ok
+                render json: {status: 'SUCCESS', message:'Loaded data', data:average_msg},status: :ok
 
             end
 
-            def maxNumMessagesPerHour
-                max_num_messages = map_num_msg_by_contexto.values.max/amountHour.to_f
-                render json: {status: 'SUCCESS', message:'Loaded data', data:max_num_messages},status: :ok
-
-            end
-
-            def minNumMessagesPerHour
-                min_num_messages = map_num_msg_by_contexto.values.min/amountHour.to_f
-                render json: {status: 'SUCCESS', message:'Loaded data', data:min_num_messages},status: :ok
-
-            end
 
             def maxNumMessages
                 max_num_messages = map_num_msg_by_contexto.values.max
